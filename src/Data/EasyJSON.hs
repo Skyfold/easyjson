@@ -4,16 +4,33 @@ import Text.Trifecta
 import qualified Data.Aeson as A
 import Data.HashMap.Strict as HM
 import Text.Trifecta
-import Data.ByteString.Lazy (ByteString, toStrict)
+import qualified Data.ByteString.Lazy as Lazy
+import qualified Data.ByteString as Strict
 import Data.Vector as V
-import Data.Text (Text, pack)
+import Data.Text (Text, pack, unpack)
 import Control.Applicative
 import Text.Parser.Token.Highlight
 import Data.String
 import Control.Monad.IO.Class
 
-checkJSON :: MonadIO m => String -> m (Maybe A.Value)
-checkJSON = parseFromFile value
+readFileToJSON :: MonadIO m => String -> m (Maybe A.Value)
+readFileToJSON = parseFromFile value
+
+stringToJSON :: String -> Result A.Value
+stringToJSON = parseString value mempty
+
+strictByteStringToJSON :: Strict.ByteString -> Result A.Value
+strictByteStringToJSON = parseByteString value mempty
+
+lazyByteStringToJSON :: Lazy.ByteString -> Result A.Value
+lazyByteStringToJSON = parseByteString value mempty . Lazy.toStrict
+
+textToJSON :: Text -> Result A.Value
+textToJSON = parseString value mempty . unpack
+
+maybeValue :: Result A.Value -> Maybe A.Value
+maybeValue (Success a) = Just a
+maybeValue _ = Nothing
 
 value :: (Monad m, TokenParsing m) => m A.Value
 value = object
@@ -24,7 +41,9 @@ value = object
         <|> number
 
 object :: (Monad m, TokenParsing m) => m A.Value
-object = A.Object . HM.unions <$> braces (sepBy obj (symbolic ',')) where 
+object = A.Object . HM.unions <$> braces (sepBy obj (symbolic ',')) 
+      <?> "object"
+  where 
     obj = do
         key <- textValue <* symbolic ':'
         value <- value
@@ -50,7 +69,7 @@ number = do
 textValue :: TokenParsing m => m Text
 textValue = fromString <$> token (highlight StringLiteral lit) where
   lit = between (char '"') (char '"' <?> "end of string") (many stringChar)
-    <?> "string"
+    <?> "\"string\""
   stringChar = stringLetter
            <|> stringEscape
            <|> escapedChar
