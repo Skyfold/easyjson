@@ -42,6 +42,7 @@ executable ckjson
 test-suite easyJSON-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
+  other-modules:       Data.EasyJSONSpec
   main-is:             Spec.hs
   build-depends:       base
                      , easyJSON
