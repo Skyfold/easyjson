@@ -17,17 +17,15 @@ library
   hs-source-dirs:      src
   exposed-modules:     Data.EasyJSON
   build-depends:       base >= 4.7 && < 5
-                     , trifecta
-                     , aeson
-                     , scientific
-                     , trifecta
-                     , aeson
-                     , unordered-containers
+                     , trifecta >= 1.5 && < 1.6
+                     , aeson >= 0.11 && < 0.12
+                     , scientific >= 0.3 && < 0.4
+                     , unordered-containers >= 0.2 && < 0.3
                      , bytestring
-                     , vector
-                     , text
-                     , parsers
-                     , transformers
+                     , vector >= 0.11 && < 0.12
+                     , text >= 1.2 && < 1.3
+                     , parsers >= 0.12 && < 0.13
+                     , transformers >= 0.4 && < 0.5
   default-language:    Haskell2010
 
 executable ckjson
@@ -44,17 +42,17 @@ test-suite easyJSON-test
   hs-source-dirs:      test
   other-modules:       Data.EasyJSONSpec
   main-is:             Spec.hs
-  build-depends:       base
-                     , easyJSON
-                     , hspec
+  build-depends:       base >= 4.7 && < 5
+                     , easyJSON == 0.1.0.0
+                     , hspec 
                      , QuickCheck
-                     , scientific
-                     , trifecta
-                     , aeson
-                     , unordered-containers
+                     , trifecta >= 1.5 && < 1.6
+                     , aeson >= 0.11 && < 0.12
+                     , scientific >= 0.3 && < 0.4
+                     , unordered-containers >= 0.2 && < 0.3
+                     , vector >= 0.11 && < 0.12
+                     , text >= 1.2 && < 1.3
                      , bytestring
-                     , vector
-                     , text
                      , ansi-wl-pprint
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
