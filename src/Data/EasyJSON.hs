@@ -12,6 +12,7 @@ import Control.Applicative
 import Text.Parser.Token.Highlight
 import Data.String
 import Control.Monad.IO.Class
+import qualified Text.PrettyPrint.ANSI.Leijen as P
 
 readFileToJSON :: MonadIO m => String -> m (Maybe A.Value)
 readFileToJSON = parseFromFile value
@@ -31,6 +32,15 @@ textToJSON = parseString value mempty . unpack
 maybeValue :: Result A.Value -> Maybe A.Value
 maybeValue (Success a) = Just a
 maybeValue _ = Nothing
+
+toDoc :: ErrInfo -> P.Doc
+toDoc = _errDoc
+
+eitherValue :: Result A.Value -> Either ErrInfo A.Value
+eitherValue (Success a) = Right a
+eitherValue (Failure a) = Left a
+
+test (Left a) = a
 
 value :: (Monad m, TokenParsing m) => m A.Value
 value = object
